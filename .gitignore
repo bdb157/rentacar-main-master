@@ -1,0 +1,5 @@
+
+.vscode/settings.json
+
+# Project exclude paths
+/target/
