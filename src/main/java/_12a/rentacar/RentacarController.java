@@ -31,7 +31,7 @@ public class RentacarController {
 
     @RequestMapping("/rejestracja")
     public String rejestracja() {
-        logger.info("Loaded /rejestracja mapping");
+        logger.info("Loaded /registration mapping");
         return "rejestracja";
     }
 
@@ -43,11 +43,11 @@ public class RentacarController {
             @RequestParam String adres,
             @RequestParam String numer_telefonu,
             @RequestParam String email) {
-        boolean wynik = Baza.Clients.addClient(pesel, imie, nazwisko, adres, numer_telefonu, email);
-        if (wynik) {
-            logger.info("Dodano rekord do tabeli Klienci");
+        boolean result = Baza.Clients.addClient(pesel, imie, nazwisko, adres, numer_telefonu, email);
+        if (result) {
+            logger.info("A record was added to the Customers table");
         } else {
-            logger.error("Błąd przy dodaniu rekordu do tabeli Klienci");
+            logger.error("Error adding record to Customers table");
         }
 
         return "redirect:/dzieki";
@@ -55,13 +55,13 @@ public class RentacarController {
 
     @RequestMapping("/wypozycz")
     public String wypozycz() {
-        logger.info("Loaded /wypozycz mapping");
+        logger.info("Loaded /rental mapping");
         return "wypozycz";
     }
 
     @RequestMapping("/dzieki")
     public String dzieki() {
-        logger.info("Loaded /dzieki mapping");
+        logger.info("Loaded /thanks mapping");
         return "dzieki";
     }
 
@@ -75,14 +75,14 @@ public class RentacarController {
         int cenaDzienna = Baza.Cars.getCostCar(selectedCar);
         if (cenaDzienna >= 0) {
             long koszta = cenaDzienna * CountDays(pickup_date, return_date);
-            boolean wynik = Baza.Rentals.addRental(selectedCar, pesel, pickup_date, return_date, (int) koszta);
-            if (wynik) {
-                logger.info("Dodano rekord do tabeli Wypozyczenia");
+            boolean result = Baza.Rentals.addRental(selectedCar, pesel, pickup_date, return_date, (int) koszta);
+            if (result) {
+                logger.info("A record has been added to the Loans table");
             } else {
-                logger.error("Błąd przy dodaniu rekordu do tabeli Wypozyczenia");
+                logger.error("Error adding record to the Rentals table");
             }
         } else {
-            logger.error("Nie znaleziono ceny dla wybranego samochodu");
+            logger.error("Price for car not found");
         }
 
         return "redirect:/wypozycz";
@@ -94,13 +94,13 @@ public class RentacarController {
             model.addAttribute("markaModel" + i, Baza.Cars.getModelBrand(String.valueOf(i)));
             model.addAttribute("cenaSamochodu" + i, Baza.Cars.getCostCar(String.valueOf(i)) + " zł");
         }
-        logger.info("Loaded /dostepne mapping");
-        return "dostepne";
+        logger.info("Loaded /accessible mapping");
+        return "accessible";
     }
 
 
     // Metody poniżej
-    long CountDays(String rentDate, String returnDate) { // long dlatego, że Duration.between().toDays() zwraca long
+    long CountDays(String rentDate, String returnDate) {
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         LocalDateTime date1 = LocalDate.parse(rentDate, format).atStartOfDay();
         LocalDateTime date2 = LocalDate.parse(returnDate, format).atStartOfDay();
