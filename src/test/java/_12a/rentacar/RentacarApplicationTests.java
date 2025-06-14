@@ -20,37 +20,37 @@ import static org.testng.Assert.assertTrue;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT) // must be here to MockMvc work
 @AutoConfigureMockMvc
 class RentacarApplicationTests {
-    private final testBazy baza = new testBazy();
+    private final testbase database = new testbase();
     private static final Logger logger = LogManager.getLogger(RentacarApplicationTests.class);
 
     @Test
     void testDaysCount() {
         logger.info("Expected output: 29 Dni");
         RentacarController controller = new RentacarController();  //yyyy-MM-dd
-        long wynik = controller.CountDays("2023-12-01", "2023-12-30");
-        logger.info("Wynik metody: " + wynik + " Dni");
-        assertEquals(29, wynik);
+        long result = controller.CountDays("2023-12-01", "2023-12-30");
+        logger.info("Result method: " + result + " days");
+        assertEquals(29, result);
     }
 
     @Test
     public void testConToDB() {
-        if (baza.getConnection() != null) {
-            logger.info("Połączono z bazą!");
+        if (database.getConnection() != null) {
+            logger.info("Connected with database!");
         } else {
-            logger.error("Problem połączenia z bazą!");
+            logger.error("Something went wrong!");
         }
-        assertNotNull(baza.getConnection());
+        assertNotNull(database.getConnection());
     }
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void testWypozyczMapping() throws Exception {
-        MvcResult wypozycz = mockMvc.perform(MockMvcRequestBuilders.get("/wypozycz"))
+    public void testRentalMapping() throws Exception {
+        MvcResult rent = mockMvc.perform(MockMvcRequestBuilders.get("/wypozycz"))
                 .andExpect(status().isOk())
                 .andReturn();
-        logger.info("HTTP status code: " + wypozycz.getResponse().getStatus());
+        logger.info("HTTP status code: " + rent.getResponse().getStatus());
     }
 
     @Test
@@ -62,65 +62,65 @@ class RentacarApplicationTests {
     }
 
     @Test
-    public void testDziekiMapping() throws Exception {
-        MvcResult dzieki = mockMvc.perform(MockMvcRequestBuilders.get("/dzieki"))
+    public void testThanksMapping() throws Exception {
+        MvcResult thanks = mockMvc.perform(MockMvcRequestBuilders.get("/dzieki"))
                 .andExpect(status().isOk())
                 .andReturn();
-        logger.info("HTTP status code: " + dzieki.getResponse().getStatus());
+        logger.info("HTTP status code: " + thanks.getResponse().getStatus());
     }
 
     @Test
-    public void testDostepneMapping() throws Exception {
-        MvcResult dostepne = mockMvc.perform(MockMvcRequestBuilders.get("/dostepne"))
+    public void testAccessibleMapping() throws Exception {
+        MvcResult map = mockMvc.perform(MockMvcRequestBuilders.get("/dostepne"))
                 .andExpect(status().isOk())
                 .andReturn();
-        logger.info("HTTP status code: " + dostepne.getResponse().getStatus());
+        logger.info("HTTP status code: " + map.getResponse().getStatus());
     }
 
     @Test
-    public void testRejestracjaMapping() throws Exception {
-        MvcResult rejestracja = mockMvc.perform(MockMvcRequestBuilders.get("/rejestracja"))
+    public void testregistrationMapping() throws Exception {
+        MvcResult registration = mockMvc.perform(MockMvcRequestBuilders.get("/rejestracja"))
                 .andExpect(status().isOk())
                 .andReturn();
-        logger.info("HTTP status code: " + rejestracja.getResponse().getStatus());
+        logger.info("HTTP status code: " + registration.getResponse().getStatus());
     }
 
     @Test
     public void testInsertForSamochody() {
-        baza.testTableSamochody();
+        database.testTableCars();
 
-        if(baza.checkIfRecordExistsSamochody()) {
-            logger.info("Rekord testowy został dodany do tabeli Samochody!");
+        if(database.checkIfRecordExistsSamochody()) {
+            logger.info("Test record added to Cars table!");
         } else {
-            logger.error("Rekord nie mógł być dodany do tabeli Samochody!");
+            logger.error("Test record not added to Cars table!");
         }
-        assertTrue(baza.checkIfRecordExistsSamochody());
+        assertTrue(database.checkIfRecordExistsSamochody());
     }
 
     @Test
-    public void testInsertForKlienci() {
-        boolean wynik = Baza.Klienci.dodajKlienta("01234567890", "test", "test", "test", "000000000", "test@example.com");
-        if(wynik) {
-            logger.info("Rekord został dodany do bazy!");
+    public void testInsertForClients() {
+        boolean result = Baza.Clients.addClient("01234567890", "test", "test", "test", "000000000", "test@example.com");
+        if(result) {
+            logger.info("Test record added to database");
         } else {
-            logger.error("Nie udało się dodać rekordu testowego do bazy");
+            logger.error("Failed to add test record to database");
         }
-        assertTrue(wynik);
+        assertTrue(result);
     }
 
     @Test
-    public void testInsertForWypozyczenia() {
-        boolean wynik = Baza.Wypozyczenia.dodajWypozyczenie("2","01234567890", "1999-01-01", "1999-01-02", Integer.parseInt("100"));
-        if(wynik) {
-            logger.info("Rekord został dodany do bazy!");
+    public void testInsertForRental() {
+        boolean result = Baza.Rentals.addRental("2","02312808023", "1999-01-01", "1999-01-02", Integer.parseInt("100"));
+        if(result) {
+            logger.info("Record added to database!");
         } else {
-            logger.error("Nie udało się dodać rekordu testowego do bazy");
+            logger.error("Failed to add test record to database");
         }
-        assertTrue(wynik);
+        assertTrue(result);
     }
 
     @AfterAll
     public static void cleanup() {
-        testBazy.deleteRecordIfExists();
+        testbase.deleteRecordIfExists();
     }
 }

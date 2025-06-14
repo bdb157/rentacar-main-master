@@ -21,8 +21,8 @@ public class RentacarController {
     @RequestMapping("/")
     public String home(Model model) {
         for(int i = 1; i<=3; i++) {
-            model.addAttribute("markaModel" + i, Baza.Samochody.pobierzModelMarke(String.valueOf(i)));
-            model.addAttribute("cenaSamochodu" + i, Baza.Samochody.pobierzKosztSamochodu(String.valueOf(i)) + " zł");
+            model.addAttribute("markaModel" + i, Baza.Cars.getModelBrand(String.valueOf(i)));
+            model.addAttribute("cenaSamochodu" + i, Baza.Cars.getCostCar(String.valueOf(i)) + " zł");
         }
 
         logger.info("Loaded / mapping");
@@ -43,7 +43,7 @@ public class RentacarController {
             @RequestParam String adres,
             @RequestParam String numer_telefonu,
             @RequestParam String email) {
-        boolean wynik = Baza.Klienci.dodajKlienta(pesel, imie, nazwisko, adres, numer_telefonu, email);
+        boolean wynik = Baza.Clients.addClient(pesel, imie, nazwisko, adres, numer_telefonu, email);
         if (wynik) {
             logger.info("Dodano rekord do tabeli Klienci");
         } else {
@@ -72,10 +72,10 @@ public class RentacarController {
             @RequestParam String pickup_date,
             @RequestParam String return_date) {
 
-        int cenaDzienna = Baza.Samochody.pobierzKosztSamochodu(selectedCar);
+        int cenaDzienna = Baza.Cars.getCostCar(selectedCar);
         if (cenaDzienna >= 0) {
             long koszta = cenaDzienna * CountDays(pickup_date, return_date);
-            boolean wynik = Baza.Wypozyczenia.dodajWypozyczenie(selectedCar, pesel, pickup_date, return_date, (int) koszta);
+            boolean wynik = Baza.Rentals.addRental(selectedCar, pesel, pickup_date, return_date, (int) koszta);
             if (wynik) {
                 logger.info("Dodano rekord do tabeli Wypozyczenia");
             } else {
@@ -91,8 +91,8 @@ public class RentacarController {
     @RequestMapping("/dostepne")
     public String dostepne(Model model) {
         for(int i = 1; i<=6; i++) {
-            model.addAttribute("markaModel" + i, Baza.Samochody.pobierzModelMarke(String.valueOf(i)));
-            model.addAttribute("cenaSamochodu" + i, Baza.Samochody.pobierzKosztSamochodu(String.valueOf(i)) + " zł");
+            model.addAttribute("markaModel" + i, Baza.Cars.getModelBrand(String.valueOf(i)));
+            model.addAttribute("cenaSamochodu" + i, Baza.Cars.getCostCar(String.valueOf(i)) + " zł");
         }
         logger.info("Loaded /dostepne mapping");
         return "dostepne";

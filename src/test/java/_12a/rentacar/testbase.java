@@ -9,9 +9,9 @@ import java.io.InputStream;
 import java.sql.*;
 import java.util.Properties;
 
-public class testBazy {
+public class testbase {
 
-    private static final Logger logger = LogManager.getLogger(testBazy.class);
+    private static final Logger logger = LogManager.getLogger(testbase.class);
     static Properties props = new Properties();
 
     static {
@@ -29,9 +29,9 @@ public class testBazy {
     static {
         try {
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            logger.info("Polączono do bazy");
+            logger.info("Connected to database");
         } catch (SQLException e) {
-            logger.error("Nie udało się połączyć z bazą");
+            logger.error("Could not connect to database");
             throw new RuntimeException(e);
         }
     }
@@ -40,17 +40,17 @@ public class testBazy {
         return connection;
     }
 
-    public void testTableSamochody() {
+    public void testTableCars() {
         String insertQuery = "INSERT INTO Samochody (Marka, Model, RokProdukcji, CenaDzienna, Dostepnosc) VALUES ('Test', 'Test', 1970, 250, 'Nie')";
         try (PreparedStatement insertion = connection.prepareStatement(insertQuery)) {
             insertion.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Nie udało się dodać rekordu do tabeli");
+            logger.error("Failed to add record to table");
             throw new RuntimeException(e);
         }
     }
 
-    public boolean checkIfRecordExistsKlienci() {
+    public boolean checkIfRecordExistsClients() {
         String selectQuery = "SELECT * FROM Klienci WHERE pesel = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
@@ -59,12 +59,12 @@ public class testBazy {
             ResultSet resultSet = preparedStatement.executeQuery();
             return resultSet.next();
         } catch (SQLException e) {
-            logger.error("Nie udało się wykonać kwerendy");
+            logger.error("Query execution failed");
             throw new RuntimeException(e);
         }
     }
 
-    public boolean checkIfRecordExistsWypozyczenia() {
+    public boolean checkIfRecordExistsRental() {
         String selectQuery = "SELECT * FROM Wypozyczenia WHERE pesel = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
@@ -73,7 +73,7 @@ public class testBazy {
             ResultSet resultSet = preparedStatement.executeQuery();
             return resultSet.next();
         } catch (SQLException e) {
-            logger.error("Nie udało się wykonać kwerendy");
+            logger.error("Query execution failed");
             throw new RuntimeException(e);
         }
     }
@@ -88,7 +88,7 @@ public class testBazy {
             ResultSet resultSet = preparedStatement.executeQuery();
             return resultSet.next();
         } catch (SQLException e) {
-            logger.error("Nie udało się wykonać kwerendy");
+            logger.error("Query execution failed");
             throw new RuntimeException(e);
         }
     }
@@ -100,7 +100,7 @@ public class testBazy {
             preparedStatement.setString(1, "01234567890");
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Nie udało się usunąć rekordu");
+            logger.error("Query execution failed");
             throw new RuntimeException(e);
         }
 
@@ -109,7 +109,7 @@ public class testBazy {
             preparedStatement.setString(1, "01234567890");
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Nie udało się usunąć rekordu");
+            logger.error("Query execution failed");
             throw new RuntimeException(e);
         }
 
@@ -119,7 +119,7 @@ public class testBazy {
             preparedStatement.setInt(2, 1970);
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            logger.error("Nie udało się usunąć rekordu");
+            logger.error("Query execution failed");
             throw new RuntimeException(e);
         }
 

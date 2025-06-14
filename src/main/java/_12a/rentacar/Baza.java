@@ -29,15 +29,15 @@ public class Baza {
     static {
         try {
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
-            logger.info("Polączono do bazy");
+            logger.info("Connected with database");
         } catch (SQLException e) {
-            logger.error("Nie udało się połączyć z bazą");
+            logger.error("Not connected with database");
             throw new RuntimeException(e);
         }
     }
 
-    static class Klienci {
-        public static boolean dodajKlienta(
+    static class Clients {
+        public static boolean addClient(
                 String pesel,
                 String imie,
                 String nazwisko,
@@ -59,12 +59,12 @@ public class Baza {
 
                 return rowsAffected > 0;
             } catch (SQLException e) {
-                logger.error("Nie udało się wstawić rekordu do bazy");
+                logger.error("Failed to insert record into database");
                 throw new RuntimeException(e);
             }
         }
 
-        public static boolean usunKlienta(String pesel) {
+        public static boolean deleteClient(String pesel) {
             String deleteQuery = "DELETE FROM Klienci WHERE pesel = ?";
 
             try(PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
@@ -74,14 +74,14 @@ public class Baza {
 
                 return rowsAffected > 0;
             } catch (SQLException e) {
-                logger.error("Nie udało się usunąć rekordu z bazy");
+                logger.error("Failed to delete record from database");
                 throw new RuntimeException(e);
             }
         }
     }
 
-    static class Wypozyczenia {
-        public static boolean dodajWypozyczenie (
+    static class Rentals {
+        public static boolean addRental (
                 String selectedCar,
                 String pesel,
                 String pickup_date,
@@ -108,12 +108,12 @@ public class Baza {
 
                 return rowsAffected > 0;
             } catch (SQLException e) {
-                logger.error("Nie udało się wstawić rekordu do bazy");
+                logger.error("Failed to insert record into database");
                 throw new RuntimeException(e);
             }
         }
         
-        public static boolean usunWypozyczenie(String id) {
+        public static boolean deleteRental(String id) {
             String deleteQuery = "DELETE FROM Wypozyczenia WHERE WypozyczenieID = ?";
 
             try(PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
@@ -123,51 +123,51 @@ public class Baza {
 
                 return rowsAffected > 0;
             } catch (SQLException e) {
-                logger.error("Nie udało się usunąć rekordu z bazy");
+                logger.error("Failed to delete record from database");
                 throw new RuntimeException(e);
             }
         }
     }
 
-    static class Samochody {
-        public static int pobierzKosztSamochodu(String selectedCar) {
-            String cenaSamochoduQuery = "SELECT CenaDzienna FROM Samochody WHERE SamochodID = ?";
+    static class Cars {
+        public static int getCostCar(String selectedCar) {
+            String priceCarQuery = "SELECT CenaDzienna FROM Samochody WHERE SamochodID = ?";
             int cenaDzienna = -1;
 
-            try (PreparedStatement query = connection.prepareStatement(cenaSamochoduQuery)) {
+            try (PreparedStatement query = connection.prepareStatement(priceCarQuery)) {
                 query.setInt(1, Integer.parseInt(selectedCar));
                 try (ResultSet resultSet = query.executeQuery()) {
                     if (resultSet.next()) {
-                        cenaDzienna = resultSet.getInt("CenaDzienna");
+                        cenaDzienna = resultSet.getInt("cenaDzienna");
                     }
                 }
 
                 return cenaDzienna;
             } catch (SQLException e) {
-                logger.error("Nie udało się pobrać rekordu z bazy");
+                logger.error("Failed to retrieve record from database");
                 throw new RuntimeException(e);
             }
         }
 
-        public static String pobierzModelMarke(String selectedCar) {
+        public static String getModelBrand(String selectedCar) {
             String query = "SELECT Marka, Model FROM Samochody WHERE SamochodID = ?";
-            String marka = null, model = null;
+            String brand = null, model = null;
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, Integer.parseInt(selectedCar));
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
-                        marka = resultSet.getString("Marka");
+                        brand = resultSet.getString("Marka");
                         model = resultSet.getString("Model");
                     }
-                    return marka+" "+model;
+                    return brand+" "+model;
                 }
             } catch (SQLException e) {
-                logger.error("Nie udało się pobrać rekordu z bazy");
+                logger.error("Failed to retrieve record from database");
                 throw new RuntimeException(e);
             }
         }
         
-        public static boolean dodajSamochod(
+        public static boolean addCar(
             String Marka,
             String Model,
             int RokProdukcji,
@@ -187,12 +187,12 @@ public class Baza {
 
                 return rowsAffected > 0;
             } catch (SQLException e) {
-                logger.error("Nie udało się wstawić rekordu do bazy");
+                logger.error("Failed to insert record into database");
                 throw new RuntimeException(e);
             }
         }
 
-        public static boolean usunSamochod(String id) {
+        public static boolean deleteCar(String id) {
             String deleteQuery = "DELETE FROM Samochody WHERE SamochodID = ?";
 
             try(PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
@@ -202,7 +202,7 @@ public class Baza {
 
                 return rowsAffected > 0;
             } catch (SQLException e) {
-                logger.error("Nie udało się usunąć rekordu z bazy");
+                logger.error("Failed to delete record from database");
                 throw new RuntimeException(e);
             }
         }
