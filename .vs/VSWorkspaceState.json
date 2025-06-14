@@ -1,0 +1,17 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\.idea",
+    "\\logs",
+    "\\out",
+    "\\out\\artifacts",
+    "\\out\\artifacts\\rentacar_jar",
+    "\\src",
+    "\\src\\test",
+    "\\src\\test\\java",
+    "\\src\\test\\java\\_12a",
+    "\\src\\test\\java\\_12a\\rentacar"
+  ],
+  "SelectedNode": "\\out\\artifacts\\rentacar_jar\\rentacar-0.0.1.jar",
+  "PreviewInSolutionExplorer": false
+}

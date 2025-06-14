@@ -102,7 +102,7 @@ public class Baza {
                 preparedStatement.setDate(4, sqlReturnDate);
                 preparedStatement.setInt(5, koszta);
 
-                preparedStatement.executeUpdate();
+
 
                 int rowsAffected = preparedStatement.executeUpdate();
 
