@@ -29,13 +29,13 @@ public class RentacarController {
         return "index";
     }
 
-    @RequestMapping("/rejestracja")
-    public String rejestracja() {
+    @RequestMapping("/registration")
+    public String registration() {
         logger.info("Loaded /registration mapping");
-        return "rejestracja";
+        return "registration";
     }
 
-    @PostMapping("/process_rejestracja")
+    @PostMapping("/process_registration")
     public String registerUser(
             @RequestParam String pesel,
             @RequestParam String imie,
@@ -50,23 +50,23 @@ public class RentacarController {
             logger.error("Error adding record to Customers table");
         }
 
-        return "redirect:/dzieki";
+        return "redirect:/thanks";
     }
 
-    @RequestMapping("/wypozycz")
-    public String wypozycz() {
-        logger.info("Loaded /rental mapping");
-        return "wypozycz";
+    @RequestMapping("/rent")
+    public String rent() {
+        logger.info("Loaded /rent mapping");
+        return "rent";
     }
 
-    @RequestMapping("/dzieki")
-    public String dzieki() {
+    @RequestMapping("/thanks")
+    public String thanks() {
         logger.info("Loaded /thanks mapping");
-        return "dzieki";
+        return "thanks";
     }
 
-    @PostMapping("/process_wypozycz")
-    public String wypozycz_samochod(
+    @PostMapping("/process_rent")
+    public String rent_car(
             @RequestParam String pesel,
             @RequestParam("cars") String selectedCar,
             @RequestParam String pickup_date,
@@ -85,11 +85,11 @@ public class RentacarController {
             logger.error("Price for car not found");
         }
 
-        return "redirect:/wypozycz";
+        return "redirect:/rent";
     }
 
-    @RequestMapping("/dostepne")
-    public String dostepne(Model model) {
+    @RequestMapping("/accessible")
+    public String accessible(Model model) {
         for(int i = 1; i<=6; i++) {
             model.addAttribute("markaModel" + i, Baza.Cars.getModelBrand(String.valueOf(i)));
             model.addAttribute("cenaSamochodu" + i, Baza.Cars.getCostCar(String.valueOf(i)) + " zł");

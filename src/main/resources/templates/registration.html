@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>UpiżCARS</title>
-    <link rel="stylesheet" th:href="@{/css/rejestracja.css}">
+    <link rel="stylesheet" th:href="@{/css/registration.css}">
     <link rel="icon" type="image/x-icon" th:href="@{/images/ikona.ico}">
 </head>
 <body>
@@ -11,15 +11,15 @@
     <div id="menu">
         <ul>
             <li><a href="/">Strona główna</a></li>
-            <li><a href="/dostepne">Dostępne samochody</a></li>
-            <li><a href="/rejestracja">Rejestracja</a></li>
-            <li><a href="/wypozycz">Wypożycz</a></li>
+            <li><a href="/accessible">Dostępne samochody</a></li>
+            <li><a href="/registration">Rejestracja</a></li>
+            <li><a href="/rent">Wypożycz</a></li>
         </ul>
     </div>
     <div id="article">
         <h1>Zarejestruj się w bazie klientów, aby wypożyczyć samochód! </h1>
         <div id="wypozycz">
-            <form action="/process_rejestracja" method="post">
+            <form action="/process_registration" method="post">
                 <label for="name">Pesel:</label>
                 <input type="text" id="pesel" name="pesel" required>
                 <label for="name">Imię:</label>

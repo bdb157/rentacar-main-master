@@ -17,11 +17,15 @@ import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT) // must be here to MockMvc work
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 class RentacarApplicationTests {
     private final testbase database = new testbase();
     private static final Logger logger = LogManager.getLogger(RentacarApplicationTests.class);
+
+    RentacarApplicationTests(MockMvc mockMvc) {
+        this.mockMvc = mockMvc;
+    }
 
     @Test
     void testDaysCount() {
@@ -47,7 +51,7 @@ class RentacarApplicationTests {
 
     @Test
     public void testRentalMapping() throws Exception {
-        MvcResult rent = mockMvc.perform(MockMvcRequestBuilders.get("/wypozycz"))
+        MvcResult rent = mockMvc.perform(MockMvcRequestBuilders.get("/rent"))
                 .andExpect(status().isOk())
                 .andReturn();
         logger.info("HTTP status code: " + rent.getResponse().getStatus());
@@ -63,7 +67,7 @@ class RentacarApplicationTests {
 
     @Test
     public void testThanksMapping() throws Exception {
-        MvcResult thanks = mockMvc.perform(MockMvcRequestBuilders.get("/dzieki"))
+        MvcResult thanks = mockMvc.perform(MockMvcRequestBuilders.get("/thanks"))
                 .andExpect(status().isOk())
                 .andReturn();
         logger.info("HTTP status code: " + thanks.getResponse().getStatus());
@@ -71,7 +75,7 @@ class RentacarApplicationTests {
 
     @Test
     public void testAccessibleMapping() throws Exception {
-        MvcResult map = mockMvc.perform(MockMvcRequestBuilders.get("/dostepne"))
+        MvcResult map = mockMvc.perform(MockMvcRequestBuilders.get("/accessible"))
                 .andExpect(status().isOk())
                 .andReturn();
         logger.info("HTTP status code: " + map.getResponse().getStatus());
@@ -79,14 +83,14 @@ class RentacarApplicationTests {
 
     @Test
     public void testregistrationMapping() throws Exception {
-        MvcResult registration = mockMvc.perform(MockMvcRequestBuilders.get("/rejestracja"))
+        MvcResult registration = mockMvc.perform(MockMvcRequestBuilders.get("/registration"))
                 .andExpect(status().isOk())
                 .andReturn();
         logger.info("HTTP status code: " + registration.getResponse().getStatus());
     }
 
     @Test
-    public void testInsertForSamochody() {
+    public void testInsertForCar() {
         database.testTableCars();
 
         if(database.checkIfRecordExistsSamochody()) {
