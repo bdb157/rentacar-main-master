@@ -3,6 +3,8 @@ package _12a.rentacar;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -10,31 +12,23 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.testng.annotations.BeforeTest;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureMockMvc
 class RentacarApplicationTests {
-    private final testbase database = new testbase();
+    private final testdatabase database = new testdatabase();
     private static final Logger logger = LogManager.getLogger(RentacarApplicationTests.class);
 
-    RentacarApplicationTests(MockMvc mockMvc) {
-        this.mockMvc = mockMvc;
-    }
+    @Autowired
+    private MockMvc mockMvc;
 
-    @Test
-    void testDaysCount() {
-        logger.info("Expected output: 29 Dni");
-        RentacarController controller = new RentacarController();  //yyyy-MM-dd
-        long result = controller.CountDays("2023-12-01", "2023-12-30");
-        logger.info("Result method: " + result + " days");
-        assertEquals(29, result);
-    }
 
     @Test
     public void testConToDB() {
@@ -46,8 +40,16 @@ class RentacarApplicationTests {
         assertNotNull(database.getConnection());
     }
 
-    @Autowired
-    private MockMvc mockMvc;
+
+    @Test
+    void testDaysCount() {
+        logger.info("Expected output: 29 Dni");
+        RentacarController controller = new RentacarController();  //yyyy-MM-dd
+        long result = controller.CountDays("2023-12-01", "2023-12-30");
+        logger.info("Result method: " + result + " days");
+        assertEquals(29, result);
+    }
+
 
     @Test
     public void testRentalMapping() throws Exception {
@@ -93,17 +95,17 @@ class RentacarApplicationTests {
     public void testInsertForCar() {
         database.testTableCars();
 
-        if(database.checkIfRecordExistsSamochody()) {
+        if(database.checkIfRecordExistsCars()) {
             logger.info("Test record added to Cars table!");
         } else {
             logger.error("Test record not added to Cars table!");
         }
-        assertTrue(database.checkIfRecordExistsSamochody());
+        assertTrue(database.checkIfRecordExistsCars());
     }
 
     @Test
     public void testInsertForClients() {
-        boolean result = Baza.Clients.addClient("01234567890", "test", "test", "test", "000000000", "test@example.com");
+        boolean result = Baza.Clients.addClient("02312808023", "test", "test", "test", "000000000", "test@example.com");
         if(result) {
             logger.info("Test record added to database");
         } else {
@@ -114,7 +116,8 @@ class RentacarApplicationTests {
 
     @Test
     public void testInsertForRental() {
-        boolean result = Baza.Rentals.addRental("2","02312808023", "1999-01-01", "1999-01-02", Integer.parseInt("100"));
+        Baza.Clients.addClient("02312808024", "test", "test", "test", "000000001", "test@example.com");
+        boolean result = Baza.Rentals.addRental("2","02312808024", "1999-01-01", "1999-01-02", Integer.parseInt("200"));
         if(result) {
             logger.info("Record added to database!");
         } else {
@@ -125,6 +128,6 @@ class RentacarApplicationTests {
 
     @AfterAll
     public static void cleanup() {
-        testbase.deleteRecordIfExists();
+        testdatabase.deleteRecordIfExists();
     }
 }

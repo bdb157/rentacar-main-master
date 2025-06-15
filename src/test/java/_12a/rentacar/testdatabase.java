@@ -9,9 +9,9 @@ import java.io.InputStream;
 import java.sql.*;
 import java.util.Properties;
 
-public class testbase {
+public class testdatabase {
 
-    private static final Logger logger = LogManager.getLogger(testbase.class);
+    private static final Logger logger = LogManager.getLogger(testdatabase.class);
     static Properties props = new Properties();
 
     static {
@@ -41,7 +41,7 @@ public class testbase {
     }
 
     public void testTableCars() {
-        String insertQuery = "INSERT INTO Samochody (Marka, Model, RokProdukcji, CenaDzienna, Dostepnosc) VALUES ('Test', 'Test', 1970, 250, 'Nie')";
+        String insertQuery = "INSERT INTO cars (brand, model, year_of_production, daily_price, availability) VALUES ('Test', 'Test', 1970, 250, 'Nie')";
         try (PreparedStatement insertion = connection.prepareStatement(insertQuery)) {
             insertion.executeUpdate();
         } catch (SQLException e) {
@@ -51,10 +51,10 @@ public class testbase {
     }
 
     public boolean checkIfRecordExistsClients() {
-        String selectQuery = "SELECT * FROM Klienci WHERE pesel = ?";
+        String selectQuery = "SELECT * FROM clients WHERE pesel = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
-            preparedStatement.setString(1, "01234567890");
+            preparedStatement.setString(1, "02312808023");
 
             ResultSet resultSet = preparedStatement.executeQuery();
             return resultSet.next();
@@ -65,10 +65,10 @@ public class testbase {
     }
 
     public boolean checkIfRecordExistsRental() {
-        String selectQuery = "SELECT * FROM Wypozyczenia WHERE pesel = ?";
+        String selectQuery = "SELECT * FROM rentals WHERE pesel = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
-            preparedStatement.setString(1, "01234567890");
+            preparedStatement.setString(1, "02312808023");
 
             ResultSet resultSet = preparedStatement.executeQuery();
             return resultSet.next();
@@ -78,8 +78,8 @@ public class testbase {
         }
     }
 
-    public boolean checkIfRecordExistsSamochody() {
-        String selectQuery = "SELECT * FROM Samochody WHERE Marka = ? AND RokProdukcji = ?";
+    public boolean checkIfRecordExistsCars() {
+        String selectQuery = "SELECT * FROM cars WHERE brand = ? AND year_of_production = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(selectQuery)) {
             preparedStatement.setString(1, "Test");
@@ -94,26 +94,29 @@ public class testbase {
     }
 
     public static void deleteRecordIfExists() {
-        String deleteQuery = "DELETE FROM Klienci WHERE pesel = ?";
 
+        String deleteQuery = "DELETE FROM rentals WHERE pesel = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
-            preparedStatement.setString(1, "01234567890");
+            preparedStatement.setString(1, "02312808024");
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             logger.error("Query execution failed");
             throw new RuntimeException(e);
         }
 
-        deleteQuery = "DELETE FROM Wypozyczenia WHERE pesel = ?";
+        deleteQuery = "DELETE FROM clients WHERE pesel = ?";
+
         try (PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
-            preparedStatement.setString(1, "01234567890");
+            preparedStatement.setString(1, "02312808023");
+            preparedStatement.executeUpdate();
+            preparedStatement.setString(1, "02312808024");
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             logger.error("Query execution failed");
             throw new RuntimeException(e);
         }
 
-        deleteQuery = "DELETE FROM Samochody WHERE Marka = ? AND RokProdukcji = ?";
+        deleteQuery = "DELETE FROM cars WHERE brand = ? AND year_of_production = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
             preparedStatement.setString(1, "Test");
             preparedStatement.setInt(2, 1970);

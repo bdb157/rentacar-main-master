@@ -29,6 +29,7 @@ public class Baza {
     static {
         try {
             connection = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            connection.setAutoCommit(true);
             logger.info("Connected with database");
         } catch (SQLException e) {
             logger.error("Not connected with database");
@@ -39,20 +40,19 @@ public class Baza {
     static class Clients {
         public static boolean addClient(
                 String pesel,
-                String imie,
-                String nazwisko,
-                String adres,
-                String numer_telefonu,
+                String first_name,
+                String last_name,
+                String address,
+                String phone_number,
                 String email) {
-
-            String insertQuery = "INSERT INTO Klienci (pesel, imie, nazwisko, adres, numer_telefonu, email) VALUES (?, ?, ?, ?, ?, ?)";
+            String insertQuery = "INSERT INTO clients (pesel, first_name, last_name, address, phone_number, email) VALUES ( ?,?, ?, ?, ?, ?)";
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
                 preparedStatement.setString(1, pesel);
-                preparedStatement.setString(2, imie);
-                preparedStatement.setString(3, nazwisko);
-                preparedStatement.setString(4, adres);
-                preparedStatement.setString(5, numer_telefonu);
+                preparedStatement.setString(2, first_name);
+                preparedStatement.setString(3, last_name);
+                preparedStatement.setString(4, address);
+                preparedStatement.setString(5, phone_number);
                 preparedStatement.setString(6, email);
 
                 int rowsAffected = preparedStatement.executeUpdate();
@@ -65,7 +65,7 @@ public class Baza {
         }
 
         public static boolean deleteClient(String pesel) {
-            String deleteQuery = "DELETE FROM Klienci WHERE pesel = ?";
+            String deleteQuery = "DELETE FROM clients WHERE pesel = ?";
 
             try(PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
                 preparedStatement.setString(1, pesel);
@@ -86,10 +86,10 @@ public class Baza {
                 String pesel,
                 String pickup_date,
                 String return_date,
-                int koszta
+                int rental_cost
         ) {
 
-            String insertQuery = "INSERT INTO Wypozyczenia (SamochodID, pesel, DataWypozyczenia, DataZwrotu, KosztWypozyczenia) VALUES (?, ?, ?, ?, ?)";
+            String insertQuery = "INSERT INTO rentals (carid, pesel, rent_date, return_date, rental_cost) VALUES (?, ?, ?, ?, ?)";
 
             try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
                 preparedStatement.setInt(1, Integer.parseInt(selectedCar));
@@ -100,7 +100,7 @@ public class Baza {
 
                 preparedStatement.setDate(3, sqlPickupDate);
                 preparedStatement.setDate(4, sqlReturnDate);
-                preparedStatement.setInt(5, koszta);
+                preparedStatement.setInt(5, rental_cost);
 
 
 
@@ -114,7 +114,7 @@ public class Baza {
         }
         
         public static boolean deleteRental(String id) {
-            String deleteQuery = "DELETE FROM Wypozyczenia WHERE WypozyczenieID = ?";
+            String deleteQuery = "DELETE FROM rental WHERE rentalid = ?";
 
             try(PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
                 preparedStatement.setString(1, id);
@@ -131,18 +131,18 @@ public class Baza {
 
     static class Cars {
         public static int getCostCar(String selectedCar) {
-            String priceCarQuery = "SELECT CenaDzienna FROM Samochody WHERE SamochodID = ?";
-            int cenaDzienna = -1;
+            String priceCarQuery = "SELECT daily_price FROM cars WHERE carid = ?";
+            int daily_price = -1;
 
             try (PreparedStatement query = connection.prepareStatement(priceCarQuery)) {
                 query.setInt(1, Integer.parseInt(selectedCar));
                 try (ResultSet resultSet = query.executeQuery()) {
                     if (resultSet.next()) {
-                        cenaDzienna = resultSet.getInt("cenaDzienna");
+                        daily_price = resultSet.getInt("daily_price");
                     }
                 }
 
-                return cenaDzienna;
+                return daily_price;
             } catch (SQLException e) {
                 logger.error("Failed to retrieve record from database");
                 throw new RuntimeException(e);
@@ -150,13 +150,13 @@ public class Baza {
         }
 
         public static String getModelBrand(String selectedCar) {
-            String query = "SELECT Marka, Model FROM Samochody WHERE SamochodID = ?";
+            String query = "SELECT brand, Model FROM cars WHERE carid = ?";
             String brand = null, model = null;
             try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setInt(1, Integer.parseInt(selectedCar));
                 try (ResultSet resultSet = preparedStatement.executeQuery()) {
                     if (resultSet.next()) {
-                        brand = resultSet.getString("Marka");
+                        brand = resultSet.getString("brand");
                         model = resultSet.getString("Model");
                     }
                     return brand+" "+model;
@@ -170,18 +170,18 @@ public class Baza {
         public static boolean addCar(
             String Marka,
             String Model,
-            int RokProdukcji,
-            int CenaDzienna,
-            String Dostepnosc
+            int year_of_production,
+            int daily_price,
+            String availability
         ) {
-            String query = "INSERT INTO Samochody (SamochodID, Marka, Model, RokProdukcji, CenaDzienna, Dostepnosc) VALUES ('?', '?', '?', '?', '?')";
+            String query = "INSERT INTO cars (carid, brand, Model, year_of_production, daily_price, availability) VALUES (?, ?, ?, ?, ?,?)";
 
             try(PreparedStatement preparedStatement = connection.prepareStatement(query)) {
                 preparedStatement.setString(1, Marka);
                 preparedStatement.setString(2, Model);
-                preparedStatement.setInt(3, RokProdukcji);
-                preparedStatement.setInt(4, CenaDzienna);
-                preparedStatement.setString(5, Dostepnosc);
+                preparedStatement.setInt(3, year_of_production);
+                preparedStatement.setInt(4, daily_price);
+                preparedStatement.setString(5, availability);
 
                 int rowsAffected = preparedStatement.executeUpdate();
 
@@ -193,7 +193,7 @@ public class Baza {
         }
 
         public static boolean deleteCar(String id) {
-            String deleteQuery = "DELETE FROM Samochody WHERE SamochodID = ?";
+            String deleteQuery = "DELETE FROM cars WHERE carid = ?";
 
             try(PreparedStatement preparedStatement = connection.prepareStatement(deleteQuery)) {
                 preparedStatement.setString(1, id);

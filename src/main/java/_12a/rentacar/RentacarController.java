@@ -21,8 +21,8 @@ public class RentacarController {
     @RequestMapping("/")
     public String home(Model model) {
         for(int i = 1; i<=3; i++) {
-            model.addAttribute("markaModel" + i, Baza.Cars.getModelBrand(String.valueOf(i)));
-            model.addAttribute("cenaSamochodu" + i, Baza.Cars.getCostCar(String.valueOf(i)) + " zł");
+            model.addAttribute("brandModel" + i, Baza.Cars.getModelBrand(String.valueOf(i)));
+            model.addAttribute("price_car" + i, Baza.Cars.getCostCar(String.valueOf(i)) + " zł");
         }
 
         logger.info("Loaded / mapping");
@@ -38,12 +38,12 @@ public class RentacarController {
     @PostMapping("/process_registration")
     public String registerUser(
             @RequestParam String pesel,
-            @RequestParam String imie,
-            @RequestParam String nazwisko,
-            @RequestParam String adres,
-            @RequestParam String numer_telefonu,
+            @RequestParam String first_name,
+            @RequestParam String last_name,
+            @RequestParam String address,
+            @RequestParam String phone_number,
             @RequestParam String email) {
-        boolean result = Baza.Clients.addClient(pesel, imie, nazwisko, adres, numer_telefonu, email);
+        boolean result = Baza.Clients.addClient(pesel, first_name, last_name, address, phone_number, email);
         if (result) {
             logger.info("A record was added to the Customers table");
         } else {
@@ -72,10 +72,10 @@ public class RentacarController {
             @RequestParam String pickup_date,
             @RequestParam String return_date) {
 
-        int cenaDzienna = Baza.Cars.getCostCar(selectedCar);
-        if (cenaDzienna >= 0) {
-            long koszta = cenaDzienna * CountDays(pickup_date, return_date);
-            boolean result = Baza.Rentals.addRental(selectedCar, pesel, pickup_date, return_date, (int) koszta);
+        int daily_price = Baza.Cars.getCostCar(selectedCar);
+        if (daily_price >= 0) {
+            long cost = daily_price * CountDays(pickup_date, return_date);
+            boolean result = Baza.Rentals.addRental(selectedCar, pesel, pickup_date, return_date, (int) cost);
             if (result) {
                 logger.info("A record has been added to the Loans table");
             } else {
@@ -91,8 +91,8 @@ public class RentacarController {
     @RequestMapping("/accessible")
     public String accessible(Model model) {
         for(int i = 1; i<=6; i++) {
-            model.addAttribute("markaModel" + i, Baza.Cars.getModelBrand(String.valueOf(i)));
-            model.addAttribute("cenaSamochodu" + i, Baza.Cars.getCostCar(String.valueOf(i)) + " zł");
+            model.addAttribute("brandModel" + i, Baza.Cars.getModelBrand(String.valueOf(i)));
+            model.addAttribute("price_car" + i, Baza.Cars.getCostCar(String.valueOf(i)) + " zł");
         }
         logger.info("Loaded /accessible mapping");
         return "accessible";
